@@ -71,6 +71,18 @@
         const contents = boxList.map(box => box.miniBox.content);
         console.log(miniBoxList3);
         console.log(contents);
+
+        const name = "김은채";
+        const message = `${name}님 환영합니다.`;
+        console.log(message);
+
+        const nameList = [ "김은채", "김은차", "김은치" ];
+        console.log([ "<tr><td>김은채</td></tr>", "<tr><td>김은차</td></tr>", "<tr><td>김은치</td></tr>" ])
+        console.log(nameList.map(name => `<tr><td>${name}</td></tr>`));
+
+        const tableBody = document.querySelector(".name-table-body");
+        console.log({tableBody});
+        tableBody.innerHTML = nameList.map(name => `<tr><td>${name}</td></tr>`).join("");
     </script>
 </body>
 </html>
