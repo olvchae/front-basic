@@ -7,14 +7,14 @@
     <style>
         html, body {
             margin: 0;
-            height:  100vh;;
+            height: 100vh;
         }
-        
+
         .container {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            box-sizing: border-box;
             margin: 0 auto;
             width: 1200px;
             height: 100%;
@@ -27,14 +27,14 @@
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
-            box-shadow: 0 0 5px #00000044;
+            box-shadow: 0 0 4px #00000044;
             padding: 20px;
         }
 
         .input-box {
             position: relative;
-            margin-bottom: 15px;
             box-sizing: border-box;
+            margin-bottom: 15px;
             border: 1px solid #dbdbdb;
             border-radius: 4px;
             padding: 5px 10px;
@@ -42,27 +42,26 @@
             height: 50px;
             overflow: hidden;
 
-            /* & : 부모요소를 의미*/
             & > label {
-                transition: all 0.3s ease-in-out;
+                transition: all 0.3 ease-in-out;
                 transform: translateY(-50%);
                 position: absolute;
                 top: 50%;
                 left: 10px;
                 background-color: transparent;
                 font-size: 14px;
-                color: #444;
+                color: #222;
             }
-    
+
             & > input {
-                transition: all 0.3s ease-in-out;
+                transition: all 0.3 ease-in-out;
                 position: relative;
                 z-index: 10;
                 outline: none;
                 border: none;
                 width: 100%;
                 height: 100%;
-                background-color: #00000000;
+                color: #222;
             }
         }
 
@@ -73,7 +72,7 @@
             }
 
             & > input {
-                top: 30%;
+                top: 20%;
                 height: 80%;
             }
         }
@@ -83,29 +82,27 @@
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
-            border: 1px solid #dbdbdb;
+            border: none;
             border-radius: 4px;
             width: 100%;
             height: 40px;
-            background-color: #006caf;
-            color: #fafafa;
+            color: white;
+            background-color: rgba(27, 75, 231, 0.842);
             cursor: pointer;
 
             &:hover {
-                background-color: #005489;
-            }
-
-            &:active {
-                background-color: #003e65;
+                background-color: rgb(9, 9, 139);
             }
         }
-
     </style>
 </head>
 <body>
+    <!-- 1. input 2개 (username, password)-->
+    <!-- 2. button 2개 (등록하기)-->
+
     <div class="container">
         <div class="card">
-            <div class="input-box">
+            <div class="input-box input-is-not-empty">
                 <input type="text" id="un" name="username">
                 <label for="un">사용자 이름</label>
             </div>
@@ -113,17 +110,16 @@
                 <input type="password" id="pw" name="password">
                 <label for="pw">비밀번호</label>
             </div>
-            <button class="register-button">사용자 정보 등록</button>
+            <button class="register-button">등록하기</button>
         </div>
     </div>
-    
     <script>
         let userList = [];
 
         function autoIncrement() {
             let currentId = 0;
 
-            return function () {
+            return function() {
                 currentId++;
                 return currentId;
             }
@@ -146,32 +142,12 @@
         }
 
         const registerButton = document.querySelector(".register-button");
-
-        // registerButton.addEventListener("click",  () => {
-        //     const inputs = Array.from(inputBoxs).map(inputBox => inputBox.querySelector("input"));
-        //     let newUser = {
-        //         id: getNewId(),
-        //     }
-        //     Array.from(inputs).forEach(element => {
-        //         const {name, value} = element;
-        //         newUser = {
-        //             ...newUser,
-        //             [name]: value,
-        //         }
-        //     });
-
-        //     userList = [
-        //         ...userList,
-        //         newUser,
-        //     ];
-        //     console.log(userList);
-        // });
-
         registerButton.onclick = () => {
             const inputs = Array.from(inputBoxs).map(inputBox => inputBox.querySelector("input"));
             let newUser = {
                 id: getNewId(),
             }
+
             Array.from(inputs).forEach(element => {
                 const {name, value} = element;
                 newUser = {
@@ -183,7 +159,7 @@
             userList = [
                 ...userList,
                 newUser,
-            ];
+            ]
             console.log(userList);
         }
     </script>
