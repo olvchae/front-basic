@@ -196,9 +196,8 @@
                         <input type="text" class="search-input">
                         <button class="btn">검색</button>
                     </div>
-                    <div class="df-row">
-                        <button class="btn edit">수정</button>
-                        <button class="btn delete">삭제</button>
+                    <div class="df-row" id="modeButtonGroup">
+                        
                     </div>
                 </div>
             </div>
@@ -206,7 +205,7 @@
                 <table class="user-table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox"></th>
+                            <th><input type="checkbox" id="all" onchange="handleCheckOnChange(event)"></th>
                             <th>ID</th>
                             <th>사용자 이름</th>
                             <th>비밀번호</th>
@@ -222,8 +221,56 @@
     </div>
 
     <script>
+        const tableControlMode = {
+            NONE: "NONE",
+            MODIFY: "MODIFY",
+            DELETE: "DELETE",
+        };
+
+        let currentTableControlMode = tableControlMode.NONE;
+
         
         let userList = [];
+        modeButtonGroupRender();
+        tableRender();
+
+        function deleteAllById() {
+            userList = userList.filter(user => !user.checked);
+        }
+
+        function handleModeButtononClick(e) {
+            const checkBoxReset = () => {
+                userList = userList.map(user => ({
+                    ...user,
+                    checked: false,
+                }));
+            }
+
+            switch (e.target.value) {
+                case "edit":
+                    currentTableControlMode = tableControlMode.MODIFY;
+                    break;
+                case "delete":
+                    currentTableControlMode = tableControlMode.DELETE;
+                    break;
+                case "ok":
+                    if (currentTableControlMode === tableControlMode.DELETE) {
+                        deleteAllById();
+                    }
+                    if (currentTableControlMode === tableControlMode.MODIFY) {
+
+                    }
+                    currentTableControlMode = tableControlMode.NONE;
+                    checkBoxReset();
+                    break;
+                case "cancel":
+                    currentTableControlMode = tableControlMode.NONE;
+                    checkBoxReset();
+                    break;
+            }
+            modeButtonGroupRender();
+            tableRender();
+        }
 
         function autoIncrement() {
             let currentId = 0;
@@ -261,6 +308,7 @@
             const inputs = Array.from(inputBoxs).map(inputBox => inputBox.querySelector("input"));
             let newUser = {
                 id: getNewId(),
+                checked: false,
             }
 
             Array.from(inputs).forEach(element => {
@@ -284,11 +332,66 @@
             tableRender();
         }
 
+        function handleCheckOnChange(e) {
+            const checkBoxEl = e.target;
+            if (checkBoxEl.id === "all") {
+                console.log(checkBoxEl.checked);
+                userList = userList.map(user => ({
+                    ...user,
+                    checked: checkBoxEl.checked,
+                }));
+            } else if (currentTableControlMode === tableControlMode.DELETE) {
+                userList = userList.map(user => {
+                    if (user.id === parseInt(checkBoxEl.id)) {
+                        return {
+                            ...user,
+                            checked: checkBoxEl.checked,
+                        }
+                    }
+                    return user;
+                });
+            } else if (currentTableControlMode === tableControlMode.MODIFY) {
+                userList = userList.map(user => {
+                    if (user.id === parseInt(checkBoxEl.id)) {
+                        return {
+                            ...user,
+                            checked: checkBoxEl.checked,
+                        }
+                    }
+                    return {
+                            ...user,
+                            checked: false,
+                        }
+                });
+            }
+            tableRender();
+            return;
+        }
+
+        function modeButtonGroupRender() {
+            const modeButtonGroup = document.querySelector("#modeButtonGroup");
+            if (currentTableControlMode === tableControlMode.NONE) {
+                modeButtonGroup.innerHTML = `
+                    <button class="btn edit" value="edit" onclick="handleModeButtononClick(event)">수정</button>
+                    <button class="btn delete" value="delete" onclick="handleModeButtononClick(event)">삭제</button>
+                `;
+            } else {
+                modeButtonGroup.innerHTML = `
+                    <button class="btn edit" value="ok" onclick="handleModeButtononClick(event)">확인</button>
+                    <button class="btn delete" value="cancel" onclick="handleModeButtononClick(event)">취소</button>
+                `;
+            }
+        }
+        
         function tableRender() {
+            const isDisable = currentTableControlMode === tableControlMode.NONE;
+            const checkboxAll = document.querySelector("#all");
+            checkboxAll.disabled = isDisable || currentTableControlMode === tableControlMode.MODIFY;
+            checkboxAll.checked = userList.filter(user => user.checked).length === userList.length && userList.length !=- 0;
             const tbody = document.querySelector(".user-table > tbody");
             tbody.innerHTML = userList.map(user => `
                 <tr>
-                    <th><input type="checkbox"></th>
+                    <th><input type="checkbox" id = ${user.id} ${user.checked ? "checked" : ""} ${isDisable ? "disabled" : ""} onchange="handleCheckOnChange(event)"></th>
                     <td>${user.id}</td>
                     <td>${user.username}</td>
                     <td>${user.password}</td>
@@ -296,6 +399,7 @@
                 </tr>
             `).join("");
         }
+
     </script>
 </body>
 </html>
